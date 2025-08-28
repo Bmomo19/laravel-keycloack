@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\KeycloakService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -14,7 +15,7 @@ class AuthController extends Controller
         $this->keycloakService = $keycloakService;
     }
 
-    public function getUserInfo(Request $request)
+    public function getUserInfo(Request $request): JsonResponse
     {
         $user = $request->get('user'); // Injecté par le middleware
 

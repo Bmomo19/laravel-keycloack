@@ -29,34 +29,28 @@ class KeycloakAuth
         $token = $this->extractToken($request);
 
         if (!$token) {
-            return response()->json(['error' => 'Token manquant'], 401);
+            return response()->json(['error' => 'Token manquant ou mauvais'], 401);
         }
 
         try {
             $decodedToken = $this->validateToken($token);
-            $request->merge(['user' => $decodedToken]);
+            $request->attributes->set('user', $decodedToken);
 
             return $next($request);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Token invalide'], 401);
+            return response()->json(['error' => 'Token invalide', 'serverError' => $e->getMessage()], 401);
         }
     }
 
     private function extractToken(Request $request): ?string
     {
-        $authHeader = $request->header('Authorization');
-
-        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-            return null;
-        }
-
-        return substr($authHeader, 7);
+       return $request->bearerToken();
     }
 
     private function validateToken(string $token): object
     {
         // Récupérer les clés publiques de Keycloak
-        $jwksUri = "{$this->keycloakBaseUrl}/realms/{$this->realm}/protocol/openid_connect/certs";
+        $jwksUri = "{$this->keycloakBaseUrl}/realms/{$this->realm}/protocol/openid-connect/certs";
         $response = $this->httpClient->get($jwksUri);
         $jwks = json_decode($response->getBody(), true);
 
