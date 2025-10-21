@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Services\KeycloakService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    private $keycloakService;
+    private KeycloakService $keycloakService;
 
     public function __construct(KeycloakService $keycloakService)
     {
@@ -20,12 +21,12 @@ class AuthController extends Controller
         $user = $request->get('user'); // Injecté par le middleware
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'message' => 'Utilisateur authentifié avec succès'
         ]);
     }
 
-    public function refreshToken(Request $request)
+    public function refreshToken(Request $request): JsonResponse
     {
         $refreshToken = $request->input('refresh_token');
 
@@ -42,7 +43,7 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         // Keycloak gère la déconnexion côté client
         return response()->json(['message' => 'Déconnecté avec succès']);
