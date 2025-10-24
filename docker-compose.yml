@@ -50,11 +50,11 @@ services:
     environment:
       # --- Connexion à PostgreSQL existant ---
       DB_TYPE: postgresql
-      DB_HOST: postgres
+      DB_HOST: keycloak-db
       DB_PORT: 5432
       DB_NAME: jasperdb
-      DB_USER: jasper
-      DB_PASSWORD: jasper123
+      DB_USER: keycloak # jasper
+      DB_PASSWORD: keycloak123
 
       # --- Compte JasperServer ---
       JASPERSERVER_USER: jasperadmin
